@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+  --background: #f8faf9;
+  --foreground: #14231d;
+  --card: #ffffff;
+  --card-foreground: #14231d;
+  --border: #e2e8e4;
+  --muted: #eef2ef;
+  --muted-foreground: #5b6b63;
+  --primary: #0f6b4c;
+  --primary-foreground: #ffffff;
+  --primary-hover: #0c5a40;
+  --accent: #f0b429;
+  --accent-foreground: #241a02;
+  --destructive: #c0362c;
+  --destructive-foreground: #ffffff;
+  --ring: #0f6b4c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/*
+ * Theme has three states. An explicit choice stamps data-theme on <html>;
+ * with no choice the system preference decides. The media query is guarded
+ * against data-theme="light" so an explicit light choice still wins on a
+ * system set to dark, and the attribute rule is repeated so the toggle works
+ * in both directions.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0d1512;
+    --foreground: #eaf2ee;
+    --card: #131f1a;
+    --card-foreground: #eaf2ee;
+    --border: #223129;
+    --muted: #17231d;
+    --muted-foreground: #9db3a8;
+    --primary: #22a878;
+    --primary-foreground: #052014;
+    --primary-hover: #2bc78d;
+    --accent: #f0b429;
+    --accent-foreground: #241a02;
+    --destructive: #e5645a;
+    --destructive-foreground: #1a0605;
+    --ring: #22a878;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: #0d1512;
+  --foreground: #eaf2ee;
+  --card: #131f1a;
+  --card-foreground: #eaf2ee;
+  --border: #223129;
+  --muted: #17231d;
+  --muted-foreground: #9db3a8;
+  --primary: #22a878;
+  --primary-foreground: #052014;
+  --primary-hover: #2bc78d;
+  --accent: #f0b429;
+  --accent-foreground: #241a02;
+  --destructive: #e5645a;
+  --destructive-foreground: #1a0605;
+  --ring: #22a878;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, Arial), Helvetica, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}

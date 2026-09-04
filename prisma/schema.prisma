@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum AlumniStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Alumni {
+  id              String       @id @default(cuid())
+  name            String
+  department      String
+  batch           Int
+  currentPosition String?
+  company         String?
+  phone           String?
+  facebook        String?
+  email           String?
+  showPhone       Boolean      @default(false)
+  showFacebook    Boolean      @default(false)
+  status          AlumniStatus @default(PENDING)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([batch])
+  @@index([department])
+  @@index([company])
+  @@index([status])
+}
+
+model CommitteeYear {
+  id        String            @id @default(cuid())
+  year      Int               @unique
+  title     String
+  isCurrent Boolean           @default(false)
+  summary   String?
+  members   CommitteeMember[]
+}
+
+model CommitteeMember {
+  id              String        @id @default(cuid())
+  committeeYearId String
+  committeeYear   CommitteeYear @relation(fields: [committeeYearId], references: [id], onDelete: Cascade)
+  name            String
+  role            String
+  roleOrder       Int           @default(100)
+  imageUrl        String?
+  department      String?
+  batch           Int?
+
+  @@index([committeeYearId, roleOrder])
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  imageUrl    String?
+  category    String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+
+  @@index([date])
+  @@index([published])
+}
+
+model Event {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String?
+  date        DateTime
+  location    String?
+  posterUrl   String?
+  published   Boolean      @default(true)
+  photos      EventPhoto[]
+
+  @@index([date])
+}
+
+model EventPhoto {
+  id      String  @id @default(cuid())
+  eventId String
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url     String
+  caption String?
+  order   Int     @default(0)
+
+  @@index([eventId, order])
+}
+
+model TeacherSpeech {
+  id          String  @id @default(cuid())
+  name        String
+  designation String?
+  institution String?
+  message     String
+  imageUrl    String?
+  order       Int     @default(0)
+  published   Boolean @default(true)
+}
+
+model HeroSlide {
+  id          String  @id @default(cuid())
+  imageUrl    String
+  headline    String?
+  subheadline String?
+  ctaText     String?
+  ctaHref     String?
+  order       Int     @default(0)
+  enabled     Boolean @default(true)
+}
+
+model HomeSection {
+  id      String  @id @default(cuid())
+  key     String  @unique
+  label   String
+  enabled Boolean @default(true)
+  order   Int
+  config  Json    @default("{}")
+}
+
+model SiteSettings {
+  id         String  @id @default("singleton")
+  orgName    String
+  tagline    String?
+  logoUrl    String?
+  about      String?
+  email      String?
+  phone      String?
+  address    String?
+  facebook   String?
+  youtube    String?
+  footerNote String?
+}
+
+model Certificate {
+  id            String   @id @default(cuid())
+  certNo        String   @unique
+  eventName     String
+  recipientName String
+  presidentName String
+  secretaryName String
+  issueDate     DateTime
+  createdAt     DateTime @default(now())
+}
