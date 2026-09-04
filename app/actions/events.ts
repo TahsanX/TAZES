@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { cleanupImages, cleanupReplacedImage } from "@/lib/storage";
@@ -23,7 +24,7 @@ export async function createEvent(_prev: ActionResult | null, formData: FormData
 
   revalidatePath("/admin/events");
   revalidatePath("/events");
-  return { ok: true };
+  redirect("/admin/events");
 }
 
 export async function updateEvent(id: string, _prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
@@ -45,7 +46,7 @@ export async function updateEvent(id: string, _prev: ActionResult | null, formDa
   revalidatePath("/admin/events");
   revalidatePath("/events");
   revalidatePath(`/events/${data.slug}`);
-  return { ok: true };
+  redirect("/admin/events");
 }
 
 export async function deleteEvent(id: string): Promise<ActionResult> {

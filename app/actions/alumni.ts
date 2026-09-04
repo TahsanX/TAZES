@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { alumniRegisterSchema, alumniAdminSchema } from "@/lib/validators";
@@ -70,7 +71,7 @@ export async function createAlumniAdmin(_prev: ActionResult | null, formData: Fo
 
   revalidatePath("/admin/alumni");
   revalidatePath("/alumni");
-  return { ok: true };
+  redirect("/admin/alumni");
 }
 
 export async function updateAlumniAdmin(id: string, _prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
@@ -94,7 +95,7 @@ export async function updateAlumniAdmin(id: string, _prev: ActionResult | null, 
   revalidatePath("/admin/alumni");
   revalidatePath("/admin/alumni/pending");
   revalidatePath("/alumni");
-  return { ok: true };
+  redirect("/admin/alumni");
 }
 
 export async function deleteAlumniAdmin(id: string): Promise<ActionResult> {

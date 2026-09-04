@@ -41,7 +41,7 @@ export async function updateCommitteeYear(
 
   revalidatePath("/admin/committee");
   revalidatePath("/committee");
-  return { ok: true };
+  redirect(`/admin/committee/${data.year}`);
 }
 
 export async function deleteCommitteeYear(id: string): Promise<ActionResult> {
@@ -84,7 +84,10 @@ export async function updateCommitteeMember(
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const data = parsed.data;
 
-  const previous = await prisma.committeeMember.findUnique({ where: { id }, select: { imageUrl: true } });
+  const previous = await prisma.committeeMember.findUnique({
+    where: { id },
+    select: { imageUrl: true, committeeYear: { select: { year: true } } },
+  });
   await prisma.committeeMember.update({
     where: { id },
     data: { ...data, imageUrl: data.imageUrl || null, department: data.department || null },
@@ -93,6 +96,9 @@ export async function updateCommitteeMember(
 
   revalidatePath("/admin/committee");
   revalidatePath("/committee");
+  if (previous?.committeeYear.year !== undefined) {
+    redirect(`/admin/committee/${previous.committeeYear.year}`);
+  }
   return { ok: true };
 }
 

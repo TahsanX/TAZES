@@ -32,7 +32,7 @@ export function Sidebar({ pendingCount }: { pendingCount: number }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-border bg-card">
       <div className="border-b border-border p-5 font-bold text-foreground">Admin Panel</div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {LINKS.map((link) => {

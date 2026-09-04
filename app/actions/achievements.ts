@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { cleanupImages, cleanupReplacedImage } from "@/lib/storage";
@@ -20,7 +21,7 @@ export async function createAchievement(_prev: ActionResult | null, formData: Fo
   revalidatePath("/admin/achievements");
   revalidatePath("/achievements");
   revalidatePath("/");
-  return { ok: true };
+  redirect("/admin/achievements");
 }
 
 export async function updateAchievement(
@@ -43,7 +44,7 @@ export async function updateAchievement(
   revalidatePath("/admin/achievements");
   revalidatePath("/achievements");
   revalidatePath("/");
-  return { ok: true };
+  redirect("/admin/achievements");
 }
 
 export async function deleteAchievement(id: string): Promise<ActionResult> {
