@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/admin/sidebar";
+import { ThemeSync } from "@/components/layout/theme-sync";
 
 /*
  * Admin pages are per-request and auth-gated, so there is nothing to prerender.
@@ -20,6 +21,7 @@ export default async function AdminDashboardLayout({ children }: { children: Rea
 
   return (
     <div className="flex min-h-screen bg-muted/30">
+      <ThemeSync />
       <Sidebar pendingCount={pendingCount} />
       <main className="flex-1 overflow-x-hidden p-6 md:p-8">{children}</main>
     </div>
