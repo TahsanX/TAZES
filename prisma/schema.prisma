@@ -1,6 +1,10 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
+  // Vercel's serverless runtime is RHEL-based; without it listed here the
+  // client generated on a Debian/WSL machine ships no matching query engine
+  // and every query fails at runtime with PrismaClientInitializationError.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
