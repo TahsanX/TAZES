@@ -1,21 +1,27 @@
+import { Skeleton, SkeletonGroup } from "@/components/ui/skeleton";
+
 /*
- * Deliberate trade-off: this skeleton streams the response, so notFound() in a
- * child route (an unknown event id, a missing committee year) renders the 404
- * UI with a 200 status instead of 404. That matters on public pages — it is why
- * the public skeletons are scoped per-segment — but the admin panel is
- * noindex'd and navigated by hand, so no crawler or client reads the status,
- * and the perceived-speed win on every admin navigation is worth more here.
+ * Fallback for the dashboard and any admin route without its own skeleton.
+ * Shaped like the dashboard's stat-tile grid.
+ *
+ * Deliberate trade-off: this streams the response, so notFound() in a child
+ * route renders the 404 UI with a 200 status. That matters on public pages —
+ * it is why the public skeletons are scoped per-segment — but the admin panel
+ * is noindex'd and navigated by hand, so nothing reads the status.
  */
 export default function AdminLoading() {
   return (
-    <div className="animate-pulse space-y-6">
-      <div className="h-8 w-56 rounded-lg bg-muted" />
-      <div className="space-y-3">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-xl border border-border bg-card" />
+    <SkeletonGroup label="Loading dashboard">
+      <Skeleton className="h-8 w-48" />
+      <Skeleton className="mt-2 h-3.5 w-64" />
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-6">
+            <Skeleton className="h-9 w-16" />
+            <Skeleton className="mt-4 h-3 w-32" />
+          </div>
         ))}
       </div>
-      <span className="sr-only">Loading…</span>
-    </div>
+    </SkeletonGroup>
   );
 }
