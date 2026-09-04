@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { formatBatch } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Skeleton, SkeletonCircle, SkeletonGroup } from "@/components/ui/skeleton";
+import { getPublicCommitteeYears, isPublicCommitteeYear } from "@/lib/committee";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ year: string }> }): Promise<Metadata> {
   const { year } = await params;
   const committeeYear = await prisma.committeeYear.findUnique({ where: { year: Number(year) } });
-  if (!committeeYear) return { title: "Committee" };
+  if (!committeeYear || !(await isPublicCommitteeYear(committeeYear.year))) return { title: "Committee" };
   return {
     title: committeeYear.title,
     description:
@@ -31,12 +32,14 @@ export default async function CommitteeYearPage({ params }: { params: Promise<{ 
   const year = Number(yearParam);
   if (!Number.isInteger(year)) notFound();
 
-  const [committeeYear, allYears] = await Promise.all([
+  const [committeeYear, publicYears] = await Promise.all([
     prisma.committeeYear.findUnique({ where: { year } }),
-    prisma.committeeYear.findMany({ orderBy: { year: "desc" }, select: { year: true } }),
+    getPublicCommitteeYears(),
   ]);
 
-  if (!committeeYear) notFound();
+  // Archived years still exist in the database and in the admin panel, but are
+  // not reachable here — a direct URL to one 404s like any unknown year.
+  if (!committeeYear || !publicYears.includes(year)) notFound();
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -46,16 +49,16 @@ export default async function CommitteeYearPage({ params }: { params: Promise<{ 
           {committeeYear.summary && <p className="mt-2 max-w-2xl text-muted-foreground">{committeeYear.summary}</p>}
         </div>
         <div className="flex flex-wrap gap-2">
-          {allYears.map((y) => (
+          {publicYears.map((y) => (
             <Link
-              key={y.year}
-              href={`/committee/${y.year}`}
+              key={y}
+              href={`/committee/${y}`}
               className={cn(
                 "rounded-full border border-border px-3 py-1 text-sm font-medium",
-                y.year === year ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                y === year ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
               )}
             >
-              {y.year}
+              {y}
             </Link>
           ))}
         </div>

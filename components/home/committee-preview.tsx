@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatBatch } from "@/lib/format";
 import { SectionHeading } from "./section-heading";
+import { isPublicCommitteeYear } from "@/lib/committee";
 
 export async function CommitteePreview({ config }: { config: { heading?: string; subheading?: string; itemLimit?: number } }) {
   const currentYear = await prisma.committeeYear.findFirst({
@@ -10,6 +11,9 @@ export async function CommitteePreview({ config }: { config: { heading?: string;
   });
 
   if (!currentYear || currentYear.members.length === 0) return null;
+  // Same visibility rule as /committee: never surface an archived year here,
+  // even if it is still flagged isCurrent.
+  if (!(await isPublicCommitteeYear(currentYear.year))) return null;
 
   return (
     <section className="bg-muted/40 py-16">
